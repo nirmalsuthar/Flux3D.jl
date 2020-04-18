@@ -68,7 +68,7 @@ function PointNet(num_classes::Int, K::Int=64)
     PointNet(stn3D,stnKD, conv_block1, feat, cls)
 end
 
-function (m::DGCNN)(X)
+function (m::PointNet)(X)
 
         # X: [N, 3, B]
 
@@ -90,4 +90,4 @@ function (m::DGCNN)(X)
         return softmax(X, dims=1)
 end
 
-@functor DGCNN
+@functor PointNet

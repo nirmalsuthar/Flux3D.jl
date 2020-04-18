@@ -52,3 +52,4 @@ end
 function Base.getindex(v::ModelNet10PCloud, idx::Int)
     pset, cls = MN10_extract(v.datapaths[idx], v.npoints)
     return MN10DataPoint(idx, PointCloud(pset), cls)
+end
