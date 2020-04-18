@@ -2,7 +2,7 @@ export visualize
 
 function visualize(v::PointCloud; kwargs...)
     get!(kwargs, "markersize") do
-        0.02*size(v.points,1)/1024
+        0.02*v.npoints/1024
     end
     get(kwargs, "color") do
         :blue
