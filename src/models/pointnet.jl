@@ -90,3 +90,4 @@ function (m::DGCNN)(X)
         return softmax(X, dims=1)
 end
 
+@functor DGCNN
