@@ -10,4 +10,6 @@ function PointCloud(points::Array{T,2} where{T<:Number})
     PointCloud(points, size(points,1))
 end
 
+PointCloud(points::Array{Float32,2}) = PointCloud(points, size(points,1))
+
 PointCloud(;points) = PointCloud(points)

@@ -5,7 +5,6 @@ function ModelNet10(;mode="point_cloud")
     else
         error("Selected mode: $(mode) is not supported (Currently supported mode are {\"point_cloud\"}).")
     end
-
 end
 
 const MN10_classes_to_idx = Dict{String, UInt8}([("bathtub",1), ("bed",2), ("chair",3), ("desk",4), ("dresser",5),
@@ -13,6 +12,9 @@ const MN10_classes_to_idx = Dict{String, UInt8}([("bathtub",1), ("bed",2), ("cha
 
 const MN10_idx_to_classes = Dict{UInt8, String}([(1,"bathtub"), (2,"bed"), (3,"chair"), (4,"desk"), (5,"dresser"),
     (6,"monitor"), (7,"night_stand"), (8,"sofa"), (9,"table"), (10,"toilet")])
+
+const MN10_classes = ["bathtub", "bed", "chair", "desk", "dresser",
+    "monitor", "night_stand", "sofa", "table", "toilet"]
 
 struct MN10DataPoint <: AbstractDataPoint
     idx::Int
@@ -28,6 +30,9 @@ struct ModelNet10PCloud <: AbstractDataset
     npoints::Int
     sampling #TODO Add type-assertion accordingly to include two possible option {"top", "uniform"}
     datapaths::Array
+    length::Int
+    classes_to_idx::Dict{String, UInt8}
+    classes::Array{String,1}
 end
 
 function MN10_extract(datapath, npoints)
@@ -40,16 +45,20 @@ function MN10_extract(datapath, npoints)
     return (pset,cls)
 end
 
-function ModelNet10PCloud(;root::String, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
+function ModelNet10PCloud(;root::String=default_root, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
     path = dataset("ModelNet10PCloud", root)
     train ? split="train" : split="test"
-    shapeids = [line for line in readlines(joinpath(root, "modelnet10_$(split).txt"))]
+    shapeids = [line for line in readlines(joinpath(path, "modelnet10_$(split).txt"))]
     shape_names = [join(split(shapeids[i], "_")[1:end-1], "_") for i in 1:length(shapeids)]
-    datapath = [(shape_names[i], joinpath(root, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
-    ModelNet10PCloud(root, path, train, transform, npoints, sampling, datapath)
+    datapaths = [(shape_names[i], joinpath(root, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
+    _length = length(datapaths)
+    ModelNet10PCloud(root, path, train, transform, npoints, sampling, datapaths, _length, MN10_classes_to_idx, MN10_classes)
 end
 
 function Base.getindex(v::ModelNet10PCloud, idx::Int)
     pset, cls = MN10_extract(v.datapaths[idx], v.npoints)
     return MN10DataPoint(idx, PointCloud(pset), cls)
 end
+
+Base.size(v::ModelNet10PCloud) = (v.length,)
+Base.length(v::ModelNet10PCloud) = v.length

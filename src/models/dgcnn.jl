@@ -84,7 +84,7 @@ struct DGCNN
     fc_6
 end 
 
-function DGCNN(num_classes::Int, K::Int, npoints::Int)
+function DGCNN(num_classes::Int=10, K::Int=10, npoints::Int=1024)
     DGCNN(
         EdgeConv([3,32,64,64], K),
         EdgeConv([64,128,256], K),

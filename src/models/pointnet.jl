@@ -40,16 +40,16 @@ stnKD(K::Int) = Chain(
 # )
 
 struct PointNet
-    stn3D
-    stnKD
+    stn
+    fstn
     conv_block1
     feat
     cls
 end
 
-function PointNet(num_classes::Int, K::Int=64)
-    stn3D = stnKD(3)
-    stnKD = stnKD(K)
+function PointNet(num_classes::Int=10, K::Int=64)
+    stn = stnKD(3)
+    fstn = stnKD(K)
     conv_block1 = conv_bn_block(3, 64, (1,))
     feat = Chain(
         Conv((1,), 64=>128, relu),
@@ -65,20 +65,20 @@ function PointNet(num_classes::Int, K::Int=64)
         BatchNorm(256),
         )
     cls = Dense(256, num_classes, relu)
-    PointNet(stn3D,stnKD, conv_block1, feat, cls)
+    PointNet(stn,fstn, conv_block1, feat, cls)
 end
 
 function (m::PointNet)(X)
 
         # X: [N, 3, B]
 
-        X = batched_mul(X, m.stn3D(X))
+        X = batched_mul(X, m.stn(X))
         # X: [3, 3, B]
 
         X = m.conv_block1(X)
         # X: [3, 64, B]
 
-        X = batched_mul(X, m.stnKD(X))
+        X = batched_mul(X, m.fstn(X))
         # X: [3, 64, B]
 
         X = m.feat(X)
