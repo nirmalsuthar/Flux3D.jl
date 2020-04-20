@@ -26,13 +26,13 @@ struct ModelNet40PCloud <: AbstractDataset
     classes::Array{String,1}
 end
 
-function MN40_extract(cls, path, npoints)
+function MN40_extract(path, npoints)
     pset = Array{Float32}(undef, npoints, 3)
     stream = open(path, "r")
     for i in 1:npoints
         pset[i, :] = map((x->parse(Float32, x)), split(readline(stream, keep=false), ",")[1:3])
     end
-    return (pset,cls)
+    return pset
 end
 
 function ModelNet40PCloud(;root::String=default_root, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
@@ -47,17 +47,18 @@ function ModelNet40PCloud(;root::String=default_root, train::Bool=true, npoints:
     end
     classes_to_idx = Dict{String, UInt8}(classes_to_idx)
 
-    path = dataset("ModelNet40PCloud", root)
-    train ? split="train" : split="test"
-    shapeids = [line for line in readlines(joinpath(root, "modelnet40_$(split).txt"))]
+    _path = dataset("ModelNet40PCloud", root)
+    train ? _split="train" : _split="test"
+    shapeids = [line for line in readlines(joinpath(_path, "modelnet40_$(_split).txt"))]
     shape_names = [join(split(shapeids[i], "_")[1:end-1], "_") for i in 1:length(shapeids)]
-    datapaths = [(shape_names[i], joinpath(root, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
+    datapaths = [(shape_names[i], joinpath(_path, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
     length = length(datapaths)
-    ModelNet40PCloud(root, path, train, transform, npoints, sampling, datapaths, length, classes_to_idx, classes)
+    ModelNet40PCloud(root, _path, train, transform, npoints, sampling, datapaths, length, classes_to_idx, classes)
 end
 
 function Base.getindex(v::ModelNet40PCloud, idx::Int)
-    pset, cls = MN40_extract(v.classes_to_idx(v.datapaths[idx][1]), v.datapaths[idx][2], v.npoints)
+    cls = v.classes_to_idx(v.datapaths[idx][1])
+    pset, cls = MN40_extract(v.datapaths[idx][2], v.npoints)
     return MN40DataPoint(idx, PointCloud(pset), cls)
 end
 

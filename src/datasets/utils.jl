@@ -5,7 +5,7 @@ abstract type AbstractCustomDataset <: AbstractDataset end
 Base.size(v::AbstractCustomDataset) = (v.length,)
 Base.length(v::AbstractCustomDataset) = v.length
 
-Base.size(v::AbstractDataset) = error("no field named `length` found in dataset type: $(typeof(v)).")
-Base.length(v::AbstractDataset) = error("no field named `length` found in dataset type: $(typeof(v)).")
+Base.size(v::AbstractDataset) = error("define Base.size of dataset type: $(typeof(v)).")
+Base.length(v::AbstractDataset) = error("define Base.length of dataset type: $(typeof(v)).")
 
 const default_root = joinpath(@__DIR__, "..", "..", "datasets")

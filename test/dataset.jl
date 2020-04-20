@@ -1,13 +1,13 @@
 @info "Starting ModelNet tests..."
 @testset "ModelNet10 PointCloud dataset" begin
 
-    mn10 = ModelNet10(mode='point_cloud', npoints::Int=1024)
+    mn10 = ModelNet10(mode="point_cloud")
     for (split, train) in [
             ('train', true),
             ('test', false)           
         ]
         
-        dset = mn10(train=train)
+        dset = mn10(train=train, npoints::Int=1024)
 
         @test dset isa Flux3D.Dataset.AbstractDataset
         @test dset.root == joinpath(@__DIR__, "..", "datasets")

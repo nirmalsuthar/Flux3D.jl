@@ -36,7 +36,7 @@ struct ModelNet10PCloud <: AbstractDataset
 end
 
 function MN10_extract(datapath, npoints)
-    cls = [MN10_classes_to_idx[datapath[1]]]
+    cls = MN10_classes_to_idx[datapath[1]]
     pset = Array{Float32}(undef, npoints, 3)
     stream = open(datapath[2], "r")
     for i in 1:npoints
@@ -46,13 +46,13 @@ function MN10_extract(datapath, npoints)
 end
 
 function ModelNet10PCloud(;root::String=default_root, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
-    path = dataset("ModelNet10PCloud", root)
-    train ? split="train" : split="test"
-    shapeids = [line for line in readlines(joinpath(path, "modelnet10_$(split).txt"))]
+    _path = dataset("ModelNet10PCloud", root)
+    train ? _split="train" : _split="test"
+    shapeids = [line for line in readlines(joinpath(_path, "modelnet10_$(_split).txt"))]
     shape_names = [join(split(shapeids[i], "_")[1:end-1], "_") for i in 1:length(shapeids)]
-    datapaths = [(shape_names[i], joinpath(root, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
+    datapaths = [(shape_names[i], joinpath(_path, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
     _length = length(datapaths)
-    ModelNet10PCloud(root, path, train, transform, npoints, sampling, datapaths, _length, MN10_classes_to_idx, MN10_classes)
+    ModelNet10PCloud(root, _path, train, transform, npoints, sampling, datapaths, _length, MN10_classes_to_idx, MN10_classes)
 end
 
 function Base.getindex(v::ModelNet10PCloud, idx::Int)

@@ -17,14 +17,14 @@ Available options: ModelNet10, ModelNet40
 function dataset(which::String, root::String)
     if which === "ModelNet10PCloud"
         path = find_datasets(root, "modelnet40_normal_resampled")
-        if path != nothing
+        if path == nothing
             download("ModelNet", root)
             path = find_datasets(root, "modelnet40_normal_resampled")
         end
         return path
     elseif which == "ModelNet40PCloud"
         path = find_datasets(root, "modelnet40_normal_resampled")
-        if path != nothing
+        if path == nothing
             download("ModelNet", root)
             path = find_datasets(root, "modelnet40_normal_resampled")
         end
