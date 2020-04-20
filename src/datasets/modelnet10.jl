@@ -46,7 +46,7 @@ function MN10_extract(datapath, npoints)
 end
 
 function ModelNet10PCloud(;root::String=default_root, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
-    _path = dataset("ModelNet10PCloud", root)
+    _path = normpath(dataset("ModelNet10PCloud", root))
     train ? _split="train" : _split="test"
     shapeids = [line for line in readlines(joinpath(_path, "modelnet10_$(_split).txt"))]
     shape_names = [join(split(shapeids[i], "_")[1:end-1], "_") for i in 1:length(shapeids)]

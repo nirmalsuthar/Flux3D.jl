@@ -8,4 +8,4 @@ Base.length(v::AbstractCustomDataset) = v.length
 Base.size(v::AbstractDataset) = error("define Base.size of dataset type: $(typeof(v)).")
 Base.length(v::AbstractDataset) = error("define Base.length of dataset type: $(typeof(v)).")
 
-const default_root = joinpath(@__DIR__, "..", "..", "datasets")
+const default_root = normpath(@__DIR__, "..", "..", "datasets")

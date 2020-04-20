@@ -36,7 +36,7 @@ end
 
 function download(which::String, root::String)
     if which == "ModelNet"
-        local_path = joinpath(root, "modelnet40.zip")
+        local_path = joinpath(root, "modelnet40_normal_resampled.zip")
         dir_path = joinpath(root) #TODO check if dir_path exists and if not then create one.
         if(!isdir(joinpath(dir_path, "modelnet40_normal_resampled")))
             if(!isfile(local_path))

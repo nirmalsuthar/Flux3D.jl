@@ -13,8 +13,8 @@ include("utils.jl")
         include("models.jl")
     end
 
-    # @testset "Dataset" begin
-    #     include("dataset.jl")
-    # end
+    @testset "Dataset" begin
+        include("dataset.jl")
+    end
 
 end # testset Flux3D

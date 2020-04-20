@@ -36,29 +36,28 @@ function MN40_extract(path, npoints)
 end
 
 function ModelNet40PCloud(;root::String=default_root, train::Bool=true, npoints::Int=1024, transform=nothing, sampling=nothing)
-
-    cat_file = joinpath(root, "modelnet40_shape_names.txt")
+    _path = normpath(dataset("ModelNet40PCloud", root))
+    train ? _split="train" : _split="test"
+    cat_file = joinpath(_path, "modelnet40_shape_names.txt")
     
-    classes = Array{String,1}(undef, 40)
+    classes = []
     classes_to_idx = []
     for (i, line) in enumerate(readlines(cat_file))
-        classes[1] = line
+        push!(classes, line)
         push!(classes_to_idx, (line, convert(UInt8,i)))
     end
     classes_to_idx = Dict{String, UInt8}(classes_to_idx)
 
-    _path = dataset("ModelNet40PCloud", root)
-    train ? _split="train" : _split="test"
     shapeids = [line for line in readlines(joinpath(_path, "modelnet40_$(_split).txt"))]
     shape_names = [join(split(shapeids[i], "_")[1:end-1], "_") for i in 1:length(shapeids)]
     datapaths = [(shape_names[i], joinpath(_path, shape_names[i], (shapeids[i])*".txt")) for i in 1:length(shapeids)]
-    length = length(datapaths)
-    ModelNet40PCloud(root, _path, train, transform, npoints, sampling, datapaths, length, classes_to_idx, classes)
+    _length = length(datapaths)
+    ModelNet40PCloud(root, _path, train, transform, npoints, sampling, datapaths, _length, classes_to_idx, classes)
 end
 
 function Base.getindex(v::ModelNet40PCloud, idx::Int)
-    cls = v.classes_to_idx(v.datapaths[idx][1])
-    pset, cls = MN40_extract(v.datapaths[idx][2], v.npoints)
+    cls = v.classes_to_idx[v.datapaths[idx][1]]
+    pset = MN40_extract(v.datapaths[idx][2], v.npoints)
     return MN40DataPoint(idx, PointCloud(pset), cls)
 end
 

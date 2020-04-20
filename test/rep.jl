@@ -1,6 +1,4 @@
-# @testset "Custom Object" begin
-# end
-
+@info "Starting PointCloud tests..."
 @testset "PointCloud" begin
     for (T) in [
             (Float32),

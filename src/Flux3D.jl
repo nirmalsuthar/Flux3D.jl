@@ -14,12 +14,14 @@ include("rep/pcloud.jl")
 # visualization
 include("visualize.jl")
 
+# Dataset module
+include("datasets/Dataset.jl")
+using .Dataset
+export ModelNet10, ModelNet40, AbstractCustomDataset, Dataset
+
 # models
 include("models/utils.jl")
 include("models/dgcnn.jl")
 include("models/pointnet.jl")
 
-# Dataset module
-include("datasets/Dataset.jl")
-
-end
+end # module
