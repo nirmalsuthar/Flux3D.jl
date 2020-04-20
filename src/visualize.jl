@@ -4,7 +4,7 @@ function visualize(v::PointCloud; kwargs...)
     get!(kwargs, "markersize") do
         0.02*v.npoints/1024
     end
-    get(kwargs, "color") do
+    get!(kwargs, "color") do
         :blue
     end
     Makie.AbstractPlotting.meshscatter(v.points[:,1],v.points[:,2],v.points[:,3], kwargs...)
